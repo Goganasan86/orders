@@ -1,0 +1,39 @@
+version: '2'
+services:
+  php:
+    image: yiisoftware/yii2-php:7.4-apache
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
+    ports:
+      - '8000:80'
+    depends_on:
+      -  mysql
+  mysql:
+    image: mysql:latest
+    # Подключаем к общей сети с другими контейнерами
+    networks: 
+      - default
+    # Показываем наружу порт
+    ports:
+      - "3336:3306"
+    # Задаем параметры для инициализации БД
+    environment:
+      # Пароль к БД
+      MYSQL_ROOT_PASSWORD: root
+      # Создаваемая по умолчанию бд
+      MYSQL_DATABASE: db
+    # Линкуем внешнюю папку для хранения БД
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    volumes:
+      - "./database:/var/lib/mysql"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
