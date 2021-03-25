@@ -4,7 +4,6 @@ namespace app\modules\orders\models;
 
 
 use Yii;
-use app\modules\orders\models\Users;
 
 /**
  * This is the model class for table "orders".
@@ -20,6 +19,19 @@ use app\modules\orders\models\Users;
  */
 class Orders extends \yii\db\ActiveRecord
 {
+    const STATUS_DICT = [
+        0 => 'Pending',
+        1 => 'In progress',
+        2 => 'Completed',
+        3 => 'Canceled',
+        4 => 'Fail',
+    ];
+
+    const MODE_DICT = [
+        0 => 'Manual',
+        1 => 'Auto',
+    ];
+
     /**
      * {@inheritdoc}
      */

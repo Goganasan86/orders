@@ -15,6 +15,7 @@ $config = [
     'modules' => [
         'orders' => [
             'class' => 'app\modules\orders\Module',
+            'layout' => 'main'
         ],
     ],
     'components' => [

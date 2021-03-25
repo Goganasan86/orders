@@ -2,7 +2,7 @@
 
 namespace app\modules\orders\controllers;
 
-use app\modules\orders\models\Orders;
+use app\modules\orders\helpers\ServicesHelper;
 use app\modules\orders\models\Services;
 use yii\data\Pagination;
 use yii\web\Controller;
@@ -20,27 +20,18 @@ class OrdersController extends Controller
      */
     public function actionIndex()
     {
-        $getData = Yii::$app->request->get();
-        $testData = [
-            'status' => $getData['status'] ?? '',
-            'mode' => $getData['mode'] ?? '',
-            'service' => $getData['service'] ?? '',
-            'search' => 'Sonny',
-            'search-type' => 3,
-        ];
         $model = new OrdersSearch();
-        $query = $model->filter($testData);
-
-        $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 100]);
-        //echo '<pre>'; var_dump($pages->getPageSize());die;
+        $query = $model->filter(Yii::$app->request->get());
+        //\yii\helpers\VarDumper::dump(Yii::$app->request->get());die;
+        $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => Yii::$app->params['orders_page_size']]);
         $orders = $query->offset($pages->offset)
             ->limit($pages->limit)
             ->all();
-
+        //$services = ServicesHelper::getRestServices($query);
         return $this->render('index', [
             'orders' => $orders,
             'pages' => $pages,
-            'services' => Services::find()->asArray()->all()
+            //'services' => $services
         ]);
     }
 

@@ -2,11 +2,7 @@
 
 namespace app\modules\orders\models\search;
 
-use Yii;
-use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use app\modules\orders\models\Orders;
-use app\modules\orders\models\Users;
 
 /**
  * OrdersSearch represents the model behind the search form of `app\modules\orders\models\Orders`.
@@ -17,16 +13,6 @@ class OrdersSearch extends Orders
     const LINK_SEARCH = 2;
     const USERNAME_SEARCH = 3;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['id', 'user_id', 'quantity', 'service_id', 'status', 'created_at', 'mode'], 'integer'],
-            [['link'], 'safe'],
-        ];
-    }
 
     /**
      * Creates data provider instance with search query applied
@@ -37,15 +23,15 @@ class OrdersSearch extends Orders
      */
     public function search($params)
     {
-       // if (!$this->validate()) {
-            $query = Orders::find()->orderBy(['id' => SORT_DESC]);
-            if ($params['search-type'] === self::ID_SEARCH) {
+        $query = Orders::find()->orderBy(['id' => SORT_DESC]);
+        if (isset($params['search-type'])) {
+            if ($params['search-type'] === strval(self::ID_SEARCH)) {
                 $query->filterWhere(['id' => $params['search']]);
             }
-            if ($params['search-type'] === self::LINK_SEARCH) {
+            if ($params['search-type'] === strval(self::LINK_SEARCH)) {
                 $query->filterWhere(['like', 'link', (string)$params['search']]);
             }
-            if ($params['search-type'] === self::USERNAME_SEARCH) {
+            if ($params['search-type'] === strval(self::USERNAME_SEARCH)) {
                 $query->select('orders.*')
                     ->joinWith('users')
                     ->filterWhere(['or',
@@ -54,11 +40,9 @@ class OrdersSearch extends Orders
                     ])
                     ->all();
             }
+        }
 
-            return $query;
-//        }
-//
-//        return Yii::$app->session->setFlash('warning', 'Some error occured');
+        return $query;
     }
 
     /**
