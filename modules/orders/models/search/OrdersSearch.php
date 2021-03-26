@@ -46,7 +46,7 @@ class OrdersSearch extends Orders
     }
 
     /**
-     * Filter search data
+     * Filtering data
      *
      * @param array $params
      *
@@ -64,7 +64,7 @@ class OrdersSearch extends Orders
         if (isset($params['service'])) {
             $filteringOrders->andFilterWhere(['service_id' => $params['service']]);
         }
-        //return $filteringOrders->asArray()->all();
+
         return $filteringOrders;
     }
 }

@@ -1,11 +1,10 @@
 <?php
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
-use app\modules\orders\helpers\ServicesHelper;
 use app\modules\orders\models\Orders;
-$currentStatus = Yii::$app->request->getQueryParams()['status'] ?? null;
+$currentParams = Yii::$app->request->getQueryParams();
+$currentStatus = $currentParams['status'] ?? null;
 
-//echo '<pre>';var_dump($orders);die;
 ?>
 
 <body>
@@ -21,29 +20,33 @@ $currentStatus = Yii::$app->request->getQueryParams()['status'] ?? null;
             </div>
             <div class="collapse navbar-collapse" id="bs-navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Orders</a></li>
+                    <li class="active"><a href="#"><?= Yii::t('app', 'Orders') ?></a></li>
                 </ul>
             </div>
         </div>
     </nav>
     <div class="container-fluid">
         <ul class="nav nav-tabs p-b">
-            <li class="active"><a href="#">All orders</a></li>
+            <li class="<?= isset($currentStatus) ? '' : 'active'?>">
+                <a href="<?= Url::to('index')?>"><?= Yii::t('app', 'All orders') ?></a>
+            </li>
             <?php foreach (Orders::STATUS_DICT as $key => $value) : ?>
-                <li><a href="<?= Url::current(['status' => $key, 'service' => null, 'mode' => null])?>"><?= Yii::t('app', $value) ?></a></li>
+                <li class="<?= $currentStatus === strval($key) ? 'active' : ''?>">
+                    <a href="<?= Url::current(['status' => $key, 'service' => null, 'mode' => null])?>"><?= Yii::t('app', $value) ?></a>
+                </li>
             <?php endforeach; ?>
             <li class="pull-right custom-search">
                 <form class="form-inline" action="index" method="get">
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" value="" placeholder="Search orders">
+                        <input type="text" name="search" class="form-control" value="" placeholder="<?= Yii::t('app', 'Search orders') ?>">
                         <?php if ($currentStatus) : ?>
                             <input type="hidden" name="status" value="<?= $currentStatus ?>">
                         <?php endif; ?>
                         <span class="input-group-btn search-select-wrap">
                             <select class="form-control search-select" name="search-type">
-                               <option value="1" selected="">Order ID</option>
-                               <option value="2">Link</option>
-                               <option value="3">Username</option>
+                               <option value="1" selected=""><?= Yii::t('app', 'Order ID') ?></option>
+                               <option value="2"><?= Yii::t('app', 'Link') ?></option>
+                               <option value="3"><?= Yii::t('app', 'Username') ?></option>
                             </select>
                             <button type="submit" class="btn btn-default">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -56,44 +59,44 @@ $currentStatus = Yii::$app->request->getQueryParams()['status'] ?? null;
         <table class="table order-table">
             <thead>
             <tr>
-                <th>ID</th>
-                <th>User</th>
-                <th>Link</th>
-                <th>Quantity</th>
+                <th><?= Yii::t('app', 'ID') ?></th>
+                <th><?= Yii::t('app', 'User') ?></th>
+                <th><?= Yii::t('app', 'Link') ?></th>
+                <th><?= Yii::t('app', 'Quantity') ?></th>
                 <th class="dropdown-th">
                     <div class="dropdown">
                         <button class="btn btn-th btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Service
+                            <?= Yii::t('app', 'Service') ?>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li class="active"><a href="">All (<?= count($orders) ?>)</a></li>
-                            <?php foreach (ServicesHelper::getServices() as $service) : ?>
+                            <li class="active"><a href="">All (<?= array_sum($servicesId) ?>)</a></li>
+                            <?php foreach ($servicesId as $key => $value) : ?>
                             <li>
-                                <a href="<?= Url::current(['service' => $service['service_id']])?>">
-                                    <span class="label-id"><?= $service['cnt'] ?></span> <?= $service['name'] ?>
+                                <a href="<?= Url::current(['service' => $key])?>">
+                                    <span class="label-id"><?= $value ?></span> <?= $servicesNames[$key] ?>
                                 </a>
                             </li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
                 </th>
-                <th>Status</th>
+                <th><?= Yii::t('app', 'Status') ?></th>
                 <th class="dropdown-th">
                     <div class="dropdown">
                         <button class="btn btn-th btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Mode
+                            <?= Yii::t('app', 'Mode') ?>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li class="active"><a href="<?= Url::current(['mode' => null])?>">All</a></li>
+                            <li class="active"><a href="<?= Url::current(['mode' => null])?>"><?= Yii::t('app', 'All') ?></a></li>
                             <?php foreach (Orders::MODE_DICT as $key => $value) : ?>
                                 <li><a href="<?= Url::current(['mode' => $key])?>"><?= Yii::t('app', $value) ?></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
                 </th>
-                <th>Created</th>
+                <th><?= Yii::t('app', 'Created') ?></th>
             </tr>
             </thead>
             <tbody>
@@ -104,7 +107,7 @@ $currentStatus = Yii::$app->request->getQueryParams()['status'] ?? null;
                     <td class="link"><?= $order['link'] ?></td>
                     <td><?= $order['quantity'] ?></td>
                     <td class="service">
-                        <span class="label-id"><?= $order['service_id'] ?></span><?= Yii::t('app', $order->services->name) ?>
+                        <span class="label-id"><?= $servicesId[$order['service_id']] ?></span><?= Yii::t('app', $order->services->name) ?>
                     </td>
                     <td><?= $order['status'] ?></td>
                     <td><?= $order['mode'] ?></td>
@@ -129,7 +132,12 @@ $currentStatus = Yii::$app->request->getQueryParams()['status'] ?? null;
                     : ($pages->page + 1) * $pages->pageSize ?> of
                 <?= $pages->totalCount ?>
             </div>
+        </div>
 
+        <div class="pull-right">
+            <a class="btn btn-th btn-default" href="<?= Url::to(['orders/export-csv', 'params' => $currentParams])?>">
+                <?= Yii::t('app', 'Save result') ?>
+            </a>
         </div>
     </div>
 </body>

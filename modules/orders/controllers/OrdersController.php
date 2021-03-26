@@ -2,11 +2,13 @@
 
 namespace app\modules\orders\controllers;
 
+use app\modules\orders\helpers\CsvHelper;
 use app\modules\orders\helpers\ServicesHelper;
 use app\modules\orders\models\Services;
 use yii\data\Pagination;
 use yii\web\Controller;
 use app\modules\orders\models\search\OrdersSearch;
+use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
@@ -22,24 +24,40 @@ class OrdersController extends Controller
     {
         $model = new OrdersSearch();
         $query = $model->filter(Yii::$app->request->get());
-        //\yii\helpers\VarDumper::dump(Yii::$app->request->get());die;
+        $services = ServicesHelper::getServices(clone $query);
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => Yii::$app->params['orders_page_size']]);
         $orders = $query->offset($pages->offset)
             ->limit($pages->limit)
             ->all();
-        //$services = ServicesHelper::getRestServices($query);
+        $servicesNames = Services::find()->asArray()->all();
         return $this->render('index', [
             'orders' => $orders,
             'pages' => $pages,
-            //'services' => $services
+            'servicesId' => $services,
+            'servicesNames' => ArrayHelper::map($servicesNames, 'id', 'name'),//TODO делал в спешке, передалать нужно при возможности
         ]);
     }
 
+    /**
+     * Export to csv filtering data
+     * @return mixed
+     */
+    public function actionExportCsv()
+    {
+        $model = new OrdersSearch();
+        $query = $model->filter(Yii::$app->request->get('params') ?? [])->asArray()->all();
+        CsvHelper::seveToCsv($query);
+        if (file_exists('upload/csv/orders.csv')) {
+            return Yii::$app->response->sendFile('upload/csv/orders.csv', 'orders.csv');
+        }
+        return Yii::$app->session->setFlash('warning', 'Error then generate CSV');
+    }
 
     /**
-     * test
+     * If error then inmport data to db frof .sql file, you can use this action
+     * @return void
      */
-    public function actionTest()
+    public function actionAddDataToDb()
     {
         $sql = file_get_contents('test_db_data.sql');
         Yii::$app->db->createCommand($sql)->execute();

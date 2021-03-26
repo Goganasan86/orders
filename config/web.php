@@ -11,12 +11,17 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@orders' => '@app/modules/orders'
     ],
     'modules' => [
         'orders' => [
             'class' => 'app\modules\orders\Module',
             'layout' => 'main'
         ],
+        'gridview' => [
+            'class' => 'kartik\grid\Module',
+            // other module settings
+        ]
     ],
     'components' => [
         'request' => [
@@ -61,10 +66,10 @@ $config = [
             'translations' => [
                 'app*' => [
                     'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@app/messages',
+                    'basePath' => '@orders/messages',
                     'sourceLanguage' => 'en-US',
                     'fileMap' => [
-                        'app'       => 'main.php',
+                        'app'       => 'app.php',
                         'app/error' => 'error.php',
                     ],
                 ],
