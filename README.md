@@ -6,13 +6,13 @@
 
 INSTALLATION
 ------------
-First of all clone project to your local space via github:
+First of all clone project to your local space from github:
 
 ~~~
 $ git clone https://github.com/Goganasan86/orders.git
 ~~~
 
-For deploy project use docker, in command line(Unix, MacOS) run command:
+For deploy project use docker, in command line run:
 
     docker-compose up -d
     
