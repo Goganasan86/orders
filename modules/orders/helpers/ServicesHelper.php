@@ -8,13 +8,6 @@ use yii\db\ActiveQuery;
 
 class ServicesHelper {
 
-//    public static function getServices() {
-//        $sql = ' SELECT DISTINCT o.service_id, s.name, count(o.service_id) as cnt
-//                    FROM orders o JOIN services s ON o.service_id = s.id
-//                    GROUP BY service_id
-//                    ORDER BY cnt DESC ';
-//        return Yii::$app->db->createCommand($sql)->queryAll();
-//    }
     /**
      * Forming array with services
      *

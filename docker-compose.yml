@@ -12,8 +12,8 @@ services:
   mysql:
     image: mysql:latest
     # Подключаем к общей сети с другими контейнерами
-    networks: 
-      - orders
+    #networks: 
+      #- orders
     # Показываем наружу порт
     ports:
       - "3336:3306"

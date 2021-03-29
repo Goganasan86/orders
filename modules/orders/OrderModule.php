@@ -2,10 +2,12 @@
 
 namespace app\modules\orders;
 
+use yii\base\Module;
+
 /**
  * orders module definition class
  */
-class Module extends \yii\base\Module
+class OrderModule extends Module
 {
     /**
      * {@inheritdoc}

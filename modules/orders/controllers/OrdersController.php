@@ -6,6 +6,7 @@ use app\modules\orders\helpers\CsvHelper;
 use app\modules\orders\helpers\ServicesHelper;
 use app\modules\orders\models\Services;
 use yii\data\Pagination;
+use yii\db\ActiveQuery;
 use yii\web\Controller;
 use app\modules\orders\models\search\OrdersSearch;
 use yii\helpers\ArrayHelper;
@@ -23,6 +24,7 @@ class OrdersController extends Controller
     public function actionIndex()
     {
         $model = new OrdersSearch();
+        /** @var ActiveQuery $query */
         $query = $model->filter(Yii::$app->request->get());
         $services = ServicesHelper::getServices(clone $query);
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => Yii::$app->params['orders_page_size']]);
@@ -45,6 +47,7 @@ class OrdersController extends Controller
     public function actionExportCsv()
     {
         $model = new OrdersSearch();
+        /** @var ActiveQuery $query */
         $query = $model->filter(Yii::$app->request->get('params') ?? [])->asArray()->all();
         CsvHelper::seveToCsv($query);
         if (file_exists('upload/csv/orders.csv')) {

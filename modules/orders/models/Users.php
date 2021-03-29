@@ -2,6 +2,7 @@
 
 namespace app\modules\orders\models;
 
+use yii\db\ActiveRecord;
 use Yii;
 
 /**
@@ -11,7 +12,7 @@ use Yii;
  * @property string $first_name
  * @property string $last_name
  */
-class Users extends \yii\db\ActiveRecord
+class Users extends ActiveRecord
 {
     /**
      * {@inheritdoc}

@@ -2,7 +2,7 @@
 
 namespace app\modules\orders\models;
 
-
+use yii\db\ActiveRecord;
 use Yii;
 
 /**
@@ -17,7 +17,7 @@ use Yii;
  * @property int $created_at
  * @property int $mode 0 - Manual, 1 - Auto
  */
-class Orders extends \yii\db\ActiveRecord
+class Orders extends ActiveRecord
 {
     const STATUS_DICT = [
         0 => 'Pending',

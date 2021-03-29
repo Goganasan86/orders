@@ -15,7 +15,7 @@ $config = [
     ],
     'modules' => [
         'orders' => [
-            'class' => 'app\modules\orders\Module',
+            'class' => 'app\modules\orders\OrderModule',
             'layout' => 'main'
         ],
         'gridview' => [
