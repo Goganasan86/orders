@@ -23,7 +23,9 @@ class OrdersSearch extends Orders
      */
     public function search($params)
     {
-        $query = Orders::find()->orderBy(['id' => SORT_DESC]);
+        $query = Orders::find()
+            ->joinWith('services', true, 'JOIN')
+            ->orderBy(['orders.id' => SORT_DESC]);
         if (isset($params['search-type'])) {
             if ($params['search-type'] === strval(self::ID_SEARCH)) {
                 $query->filterWhere(['id' => $params['search']]);

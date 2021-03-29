@@ -4,12 +4,10 @@ namespace app\modules\orders\controllers;
 
 use app\modules\orders\helpers\CsvHelper;
 use app\modules\orders\helpers\ServicesHelper;
-use app\modules\orders\models\Services;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
 use yii\web\Controller;
 use app\modules\orders\models\search\OrdersSearch;
-use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
@@ -17,6 +15,17 @@ use Yii;
  */
 class OrdersController extends Controller
 {
+    /**
+     * Error handle
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+        ];
+    }
     /**
      * Renders the index view for the module
      * @return string
@@ -27,16 +36,16 @@ class OrdersController extends Controller
         /** @var ActiveQuery $query */
         $query = $model->filter(Yii::$app->request->get());
         $services = ServicesHelper::getServices(clone $query);
+        //var_dump($query);die;
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => Yii::$app->params['orders_page_size']]);
         $orders = $query->offset($pages->offset)
             ->limit($pages->limit)
             ->all();
-        $servicesNames = Services::find()->asArray()->all();
+
         return $this->render('index', [
             'orders' => $orders,
             'pages' => $pages,
-            'servicesId' => $services,
-            'servicesNames' => ArrayHelper::map($servicesNames, 'id', 'name'),//TODO делал в спешке, передалать нужно при возможности
+            'services' => $services,
         ]);
     }
 
@@ -48,6 +57,7 @@ class OrdersController extends Controller
     {
         $model = new OrdersSearch();
         /** @var ActiveQuery $query */
+
         $query = $model->filter(Yii::$app->request->get('params') ?? [])->asArray()->all();
         CsvHelper::seveToCsv($query);
         if (file_exists('upload/csv/orders.csv')) {

@@ -36,7 +36,7 @@ $config = [
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'orders/orders/error',
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
@@ -60,6 +60,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'orders' => 'orders/orders/index'
             ],
         ],
         'i18n' => [

@@ -28,7 +28,7 @@ $currentStatus = $currentParams['status'] ?? null;
     <div class="container-fluid">
         <ul class="nav nav-tabs p-b">
             <li class="<?= isset($currentStatus) ? '' : 'active'?>">
-                <a href="<?= Url::to('index')?>"><?= Yii::t('app', 'All orders') ?></a>
+                <a href="<?= Url::to('orders')?>"><?= Yii::t('app', 'All orders') ?></a>
             </li>
             <?php foreach (Orders::STATUS_DICT as $key => $value) : ?>
                 <li class="<?= $currentStatus === strval($key) ? 'active' : ''?>">
@@ -70,11 +70,11 @@ $currentStatus = $currentParams['status'] ?? null;
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li class="active"><a href="">All (<?= array_sum($servicesId) ?>)</a></li>
-                            <?php foreach ($servicesId as $key => $value) : ?>
+                            <li class="active"><a href="">All (<?= $pages->totalCount ?>)</a></li>
+                            <?php foreach ($services as $service) : ?>
                             <li>
-                                <a href="<?= Url::current(['service' => $key])?>">
-                                    <span class="label-id"><?= $value ?></span> <?= $servicesNames[$key] ?>
+                                <a href="<?= Url::current(['service' => $service['id']])?>">
+                                    <span class="label-id"><?= $service['cnt'] ?></span> <?= $service['name'] ?>
                                 </a>
                             </li>
                             <?php endforeach; ?>
@@ -100,14 +100,15 @@ $currentStatus = $currentParams['status'] ?? null;
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($orders as $order) : ?>
+            <?php foreach ($orders as $order) :?>
                 <tr>
                     <td><?= $order['id'] ?></td>
                     <td><?= $order->users->first_name . ' ' . $order->users->last_name ?></td>
                     <td class="link"><?= $order['link'] ?></td>
                     <td><?= $order['quantity'] ?></td>
                     <td class="service">
-                        <span class="label-id"><?= $servicesId[$order['service_id']] ?></span><?= Yii::t('app', $order->services->name) ?>
+                        <span class="label-id"><?= $services[array_search($order['service_id'], array_column($services, 'id'))]['cnt']?>
+                        </span><?= Yii::t('app', $order->services->name) ?>
                     </td>
                     <td><?= $order['status'] ?></td>
                     <td><?= $order['mode'] ?></td>

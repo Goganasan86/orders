@@ -2,6 +2,7 @@
 namespace app\modules\orders\helpers;
 use yii\db\ActiveQuery;
 
+
 /**
  * Helper count services by id
  */
@@ -15,19 +16,20 @@ class ServicesHelper {
      *
      * @return array
      */
-    public static function getServices($query) {
-        $ordersArray = $query->with('services')->asArray()->all();
-        $servicesID = Array();
-        foreach ($ordersArray as $order) {
-            $servicesID[] = $order['services'];
-        }
+    public static function getServices($query)
+    {
+        $services = $query->select(['orders.service_id', "COUNT('orders.service_id') as cnt", 'services.*'])
+            ->distinct('orders.service_id')
+            ->groupBy('orders.service_id')
+            ->orderBy(['cnt' => SORT_DESC])
+            ->asArray()->all();
 
-        $sortServicesId = array_count_values(array_map(function($item) {
-            return $item['id'];
-        }, $servicesID));
-
-        arsort($sortServicesId);
-
-        return $sortServicesId;
+        return array_map(function ($item) {
+            return [
+                'cnt' => $item['cnt'],
+                'id' => $item['id'],
+                'name' => $item['name']
+            ];
+        }, $services);
     }
 }
