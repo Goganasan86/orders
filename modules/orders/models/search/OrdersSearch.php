@@ -45,7 +45,7 @@ class OrdersSearch extends Orders
      *
      * @return Query
      */
-    public function search($params)
+    public function search()
     {
 
         $query = new Query();
@@ -59,16 +59,16 @@ class OrdersSearch extends Orders
             ->orderBy(['orders.id' => SORT_DESC]);
 
         if (isset($params['search-type'])) {
-            if ($params['search-type'] === strval(self::ID_SEARCH)) {
-                $query->filterWhere(['orders.id' => $params['search']]);
+            if ($this->searchType === strval(self::ID_SEARCH)) {
+                $query->filterWhere(['orders.id' => $this->search]);
             }
-            if ($params['search-type'] === strval(self::LINK_SEARCH)) {
-                $query->filterWhere(['like', 'link', (string)$params['search']]);
+            if ($this->searchType === strval(self::LINK_SEARCH)) {
+                $query->filterWhere(['like', 'link', (string)$this->search]);
             }
-            if ($params['search-type'] === strval(self::USERNAME_SEARCH)) {
+            if ($this->searchType === strval(self::USERNAME_SEARCH)) {
                 $query->filterWhere(['or',
-                        ['like', 'users.first_name', (string)$params['search']],
-                        ['like', 'users.last_name', (string)$params['search']],
+                        ['like', 'users.first_name', (string)$this->search],
+                        ['like', 'users.last_name', (string)$this->search],
                 ]);
             }
         }
@@ -80,28 +80,53 @@ class OrdersSearch extends Orders
      *
      * @param array $params
      *
-     * @return array
+     * @return Query
      * @throws HttpException
      */
-    public function filter(array $params)
+    public function filter()
     {
-        $this->setParams($params);
-
         if (!$this->validate()) {
             throw new HttpException(505, 'You write wrong params! Please use form');
         }
+        $query = $this->search();
+        if (isset($this->status)) {
+            $query->andFilterWhere(['status' => $this->status]);
+        }
+        if (isset($this->mode)) {
+            $query->andFilterWhere(['mode' => $this->mode]);
+        }
+        if (isset($this->service)) {
+            $query->andFilterWhere(['service_id' => $this->service]);
+        }
 
-        $filteringOrders = $this->search($params);
-        if (isset($params['status'])) {
-            $filteringOrders->andFilterWhere(['status' => $params['status']]);
-        }
-        if (isset($params['mode'])) {
-            $filteringOrders->andFilterWhere(['mode' => $params['mode']]);
-        }
-        if (isset($params['service'])) {
-            $filteringOrders->andFilterWhere(['service_id' => $params['service']]);
-        }
+        return $query;
+    }
 
+    /**
+     * Set params and return Query
+     *
+     * @param array $params
+     *
+     * @return Query
+     * @throws HttpException
+     */
+    public function getFilteringData($params)
+    {
+        $this->setParams($params);
+        return $this->filter();
+    }
+
+    /**
+     * Return array with sorted and counted services
+     *
+     * @param array $params
+     *
+     * @return array
+     * @throws HttpException
+     */
+    public function getPreparedData($params)
+    {
+        $filteringOrders = $this->getFilteringData($params);
         $services = $this->countServices(clone $filteringOrders);
         $pages = new Pagination(['totalCount' => $filteringOrders->count(), 'pageSize' => Yii::$app->params['orders_page_size']]);
         return [

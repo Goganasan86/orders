@@ -1,10 +1,12 @@
 <?php
 namespace app\modules\orders\helpers;
 
-set_time_limit ( 0 );
+//set_time_limit ( 0 );
 
 use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yii2tech\csvgrid\CsvGrid;
+use yii\db\BatchQueryResult;
 
 /**
  * Helper for save csv orders in file
@@ -14,29 +16,21 @@ class CsvHelper {
     /**
      * Create csv file in web/upload/csv
      *
-     * @param array $params
-     *
+     * @param Query $query
      * @return void
+     * @throws \yii\base\InvalidConfigException
      */
-    public static function seveToCsv($data) {
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $data,
-        ]);
+    public static function saveToCsv($query) {
 
-        $exporter = new CsvGrid([
-            'dataProvider' => $dataProvider,
-            'columns' => [                     //TODO get from provider this headers
-                'id',
-                'user_id',
-                'link',
-                'quantity',
-                'service_id',
-                'status',
-                'mode',
-                'created_at',
-            ],
-        ]);
+        foreach ($query->each() as $row) {
+            //var_dump($row);die;
+            $fh = fopen('file.csv', 'w');
 
-        $exporter->export()->saveAs('upload/csv/orders.csv');
+            fputcsv($fh, $row, "\t");
+
+            fclose($fh);
+        }
+
     }
+
 }
