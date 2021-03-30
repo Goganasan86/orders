@@ -19,17 +19,17 @@ use Yii;
  */
 class Orders extends ActiveRecord
 {
-    const STATUS_DICT = [
-        0 => 'Pending',
-        1 => 'In progress',
-        2 => 'Completed',
-        3 => 'Canceled',
-        4 => 'Fail',
+    public const STATUS_DICT = [
+        0 => 'orders.status.pending',
+        1 => 'orders.status.in_progress',
+        2 => 'orders.status.completed',
+        3 => 'orders.status.canceled',
+        4 => 'orders.status.fail',
     ];
 
-    const MODE_DICT = [
-        0 => 'Manual',
-        1 => 'Auto',
+    public const MODE_DICT = [
+        0 => 'orders.mode.manual',
+        1 => 'orders.mode.auto',
     ];
 
     /**

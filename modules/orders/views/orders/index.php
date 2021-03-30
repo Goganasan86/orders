@@ -1,10 +1,13 @@
 <?php
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
+use app\modules\orders\widgets\PaginationInfo;
 use app\modules\orders\models\Orders;
+use app\modules\orders\models\search\OrdersSearch;
+use app\modules\orders\helpers\ServicesHelper;
+
 $currentParams = Yii::$app->request->getQueryParams();
 $currentStatus = $currentParams['status'] ?? null;
-
 ?>
 
 <body>
@@ -28,7 +31,7 @@ $currentStatus = $currentParams['status'] ?? null;
     <div class="container-fluid">
         <ul class="nav nav-tabs p-b">
             <li class="<?= isset($currentStatus) ? '' : 'active'?>">
-                <a href="<?= Url::to('orders')?>"><?= Yii::t('app', 'All orders') ?></a>
+                <a href="<?= Url::to('orders')?>"><?= Yii::t('app', 'orders.status.all_orders') ?></a>
             </li>
             <?php foreach (Orders::STATUS_DICT as $key => $value) : ?>
                 <li class="<?= $currentStatus === strval($key) ? 'active' : ''?>">
@@ -36,17 +39,17 @@ $currentStatus = $currentParams['status'] ?? null;
                 </li>
             <?php endforeach; ?>
             <li class="pull-right custom-search">
-                <form class="form-inline" action="index" method="get">
+                <form class="form-inline" action="orders" method="get">
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" value="" placeholder="<?= Yii::t('app', 'Search orders') ?>">
+                        <input type="text" name="search" class="form-control" value="" placeholder="<?= Yii::t('app', 'orders.save.search_orders') ?>">
                         <?php if ($currentStatus) : ?>
                             <input type="hidden" name="status" value="<?= $currentStatus ?>">
                         <?php endif; ?>
                         <span class="input-group-btn search-select-wrap">
                             <select class="form-control search-select" name="search-type">
-                               <option value="1" selected=""><?= Yii::t('app', 'Order ID') ?></option>
-                               <option value="2"><?= Yii::t('app', 'Link') ?></option>
-                               <option value="3"><?= Yii::t('app', 'Username') ?></option>
+                               <option value="<?= OrdersSearch::ID_SEARCH ?>" selected=""><?= Yii::t('app', 'orders.search.order_id') ?></option>
+                               <option value="<?= OrdersSearch::LINK_SEARCH ?>"><?= Yii::t('app', 'orders.search.link') ?></option>
+                               <option value="<?= OrdersSearch::USERNAME_SEARCH ?>"><?= Yii::t('app', 'orders.search.username') ?></option>
                             </select>
                             <button type="submit" class="btn btn-default">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -59,14 +62,14 @@ $currentStatus = $currentParams['status'] ?? null;
         <table class="table order-table">
             <thead>
             <tr>
-                <th><?= Yii::t('app', 'ID') ?></th>
-                <th><?= Yii::t('app', 'User') ?></th>
-                <th><?= Yii::t('app', 'Link') ?></th>
-                <th><?= Yii::t('app', 'Quantity') ?></th>
+                <th><?= Yii::t('app', 'orders.orders.id') ?></th>
+                <th><?= Yii::t('app', 'orders.orders.user') ?></th>
+                <th><?= Yii::t('app', 'orders.orders.link') ?></th>
+                <th><?= Yii::t('app', 'orders.orders.quantity') ?></th>
                 <th class="dropdown-th">
                     <div class="dropdown">
                         <button class="btn btn-th btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <?= Yii::t('app', 'Service') ?>
+                            <?= Yii::t('app', 'orders.orders.service') ?>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -81,40 +84,40 @@ $currentStatus = $currentParams['status'] ?? null;
                         </ul>
                     </div>
                 </th>
-                <th><?= Yii::t('app', 'Status') ?></th>
+                <th><?= Yii::t('app', 'orders.orders.status') ?></th>
                 <th class="dropdown-th">
                     <div class="dropdown">
                         <button class="btn btn-th btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <?= Yii::t('app', 'Mode') ?>
+                            <?= Yii::t('app', 'orders.orders.mode') ?>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li class="active"><a href="<?= Url::current(['mode' => null])?>"><?= Yii::t('app', 'All') ?></a></li>
+                            <li class="active"><a href="<?= Url::current(['mode' => null])?>"><?= Yii::t('app', 'orders.mode.all') ?></a></li>
                             <?php foreach (Orders::MODE_DICT as $key => $value) : ?>
                                 <li><a href="<?= Url::current(['mode' => $key])?>"><?= Yii::t('app', $value) ?></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
                 </th>
-                <th><?= Yii::t('app', 'Created') ?></th>
+                <th><?= Yii::t('app', 'orders.orders.created') ?></th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($orders as $order) :?>
                 <tr>
                     <td><?= $order['id'] ?></td>
-                    <td><?= $order->users->first_name . ' ' . $order->users->last_name ?></td>
+                    <td><?= $order['user']?></td>
                     <td class="link"><?= $order['link'] ?></td>
                     <td><?= $order['quantity'] ?></td>
                     <td class="service">
-                        <span class="label-id"><?= $services[array_search($order['service_id'], array_column($services, 'id'))]['cnt']?>
-                        </span><?= Yii::t('app', $order->services->name) ?>
+                        <span class="label-id"><?= ServicesHelper::getServicesCount($services, $order['service_id'])?>
+                        </span><?= Yii::t('app', $order['service_name']) ?>
                     </td>
                     <td><?= $order['status'] ?></td>
                     <td><?= $order['mode'] ?></td>
                     <td>
-                        <span class="nowrap"><?= Yii::$app->formatter->asDate($order['created_at'], 'yyyy-mm-dd') ?></span>
-                        <span class="nowrap"><?= Yii::$app->formatter->asTime($order['created_at']) ?></span>
+                        <span class="nowrap"><?= $order['created_date'] ?></span>
+                        <span class="nowrap"><?= $order['created_time'] ?></span>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -127,17 +130,15 @@ $currentStatus = $currentParams['status'] ?? null;
                 ]); ?>
             </div>
             <div class="col-sm-4 pagination-counters">
-                <?= $pages->getOffset() ?> to
-                <?= ($pages->page + 1) * $pages->pageSize > $pages->totalCount
-                    ? $pages->totalCount
-                    : ($pages->page + 1) * $pages->pageSize ?> of
-                <?= $pages->totalCount ?>
+                <?= PaginationInfo::widget([
+                    'pages' => $pages,
+                ]); ?>
             </div>
         </div>
 
         <div class="pull-right">
             <a class="btn btn-th btn-default" href="<?= Url::to(['orders/export-csv', 'params' => $currentParams])?>">
-                <?= Yii::t('app', 'Save result') ?>
+                <?= Yii::t('app', 'orders.save.btn') ?>
             </a>
         </div>
     </div>

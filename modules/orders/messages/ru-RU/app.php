@@ -3,31 +3,33 @@
  * Dictionary for ru-RU
  */
 return [
-    'Orders' => 'Заказы',
-    'All orders' => 'Все заказы',
-    'Pending' => 'В ожидании',
-    'In progress' => 'В процессе',
-    'Completed' => 'Завершенные',
-    'Canceled' => 'Закрыты',
-    'Fail' => 'Не завершенные',
 
-    'ID' => 'ID',
-    'User' => 'Пользователь',
-    'Link' => 'Ссылка',
-    'Quantity' => 'Количество',
-    'Service' => 'Сервис',
-    'Status' => 'Статус',
-    'Mode' => 'Режим',
-    'Created' => 'Создана',
+    'orders.status.all_orders' => 'Все заказы',
+    'orders.status.pending' => 'В ожидании',
+    'orders.status.in_progress' => 'В процессе',
+    'orders.status.completed' => 'Завершенные',
+    'orders.status.canceled' => 'Закрыты',
+    'orders.status.fail' => 'Не завершенные',
 
-    'Order ID' => 'ID заказа',
-    'Username' => 'Имя пользователя',
+    'orders.orders.orders' => 'Заказы',
+    'orders.orders.id' => 'ID',
+    'orders.orders.user' => 'Пользователь',
+    'orders.orders.link' => 'Ссылка',
+    'orders.orders.quantity' => 'Количество',
+    'orders.orders.service' => 'Сервис',
+    'orders.orders.status' => 'Статус',
+    'orders.orders.mode' => 'Режим',
+    'orders.orders.created' => 'Создана',
 
-    'All' => 'Все',
-    'Manual' => 'Ручной',
-    'Auto' => 'Авто',
+    'orders.search.order_id' => 'ID заказа',
+    'orders.search.link' => 'URL',
+    'orders.search.username' => 'Имя пользователя',
 
-    'Search orders' => 'Поиск заказов',
-    'Save result' => 'Сохранить результат'
+    'orders.mode.all' => 'Все',
+    'orders.mode.manual' => 'Ручной',
+    'orders.mode.auto' => 'Авто',
+
+    'orders.save.search_orders' => 'Поиск заказов',
+    'orders.save.btn' => 'Сохранить результат'
 ];
 
