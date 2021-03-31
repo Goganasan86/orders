@@ -4,7 +4,6 @@ namespace app\modules\orders\controllers;
 
 use app\modules\orders\helpers\CsvHelper;
 use app\modules\orders\helpers\ServicesHelper;
-use yii\db\ActiveQuery;
 use yii\web\Controller;
 use app\modules\orders\models\search\OrdersSearch;
 use Yii;
@@ -48,7 +47,7 @@ class OrdersController extends Controller
 
     /**
      * Export to csv filtering data
-     * @return mixed
+     * @return \yii\console\Response|\yii\web\Response
      * @throws HttpException
      */
     public function actionExportCsv()
@@ -57,6 +56,8 @@ class OrdersController extends Controller
         /** @var Query $query */
         $params = Yii::$app->request->get('params');
         $query = $model->getFilteringData($params);
-        return CsvHelper::saveToCsv($query);
+        CsvHelper::saveToCsvFile($query);
+
+        return Yii::$app->response->sendFile('file.csv', Yii::t('app', 'orders.orders.orders') . '.csv');
     }
 }

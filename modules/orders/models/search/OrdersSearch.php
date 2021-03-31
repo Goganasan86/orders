@@ -58,7 +58,7 @@ class OrdersSearch extends Orders
             ->leftJoin('users', 'orders.user_id = users.id ')
             ->orderBy(['orders.id' => SORT_DESC]);
 
-        if (isset($params['search-type'])) {
+        if (isset($this->searchType)) {
             if ($this->searchType === strval(self::ID_SEARCH)) {
                 $query->filterWhere(['orders.id' => $this->search]);
             }
@@ -95,8 +95,8 @@ class OrdersSearch extends Orders
         if (isset($this->mode)) {
             $query->andFilterWhere(['mode' => $this->mode]);
         }
-        if (isset($this->service)) {
-            $query->andFilterWhere(['service_id' => $this->service]);
+        if (isset($this->serviceId)) {
+            $query->andFilterWhere(['service_id' => $this->serviceId]);
         }
 
         return $query;
@@ -178,7 +178,7 @@ class OrdersSearch extends Orders
     {
         $this->status = $params['status'] ?? null;
         $this->mode = $params['mode'] ?? null;
-        $this->serviceId = $params['service_id'] ?? null;
+        $this->serviceId = $params['service'] ?? null;
         $this->search = $params['search'] ?? null;
         $this->searchType = $params['search-type'] ?? null;
     }

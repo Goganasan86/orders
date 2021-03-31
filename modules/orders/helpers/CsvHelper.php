@@ -1,12 +1,9 @@
 <?php
 namespace app\modules\orders\helpers;
 
-//set_time_limit ( 0 );
-
-use yii\data\ArrayDataProvider;
+use Yii;
 use yii\db\Query;
-use yii2tech\csvgrid\CsvGrid;
-use yii\db\BatchQueryResult;
+
 
 /**
  * Helper for save csv orders in file
@@ -18,19 +15,31 @@ class CsvHelper {
      *
      * @param Query $query
      * @return void
-     * @throws \yii\base\InvalidConfigException
      */
-    public static function saveToCsv($query) {
-
+    public static function saveToCsvFile($query) {
+        ob_start();
+        $fh = fopen('file.csv', 'w');
+        fputcsv($fh, [
+            Yii::t('app', 'orders.orders.id'),
+            Yii::t('app', 'orders.orders.user'),
+            Yii::t('app', 'orders.orders.link'),
+            Yii::t('app', 'orders.orders.quantity'),
+            Yii::t('app', 'orders.orders.service'),
+            Yii::t('app', 'orders.orders.status'),
+            Yii::t('app', 'orders.orders.mode'),
+            Yii::t('app', 'orders.orders.created')
+        ], "\t");
+        fclose($fh);
+        $fh = fopen('file.csv', 'a');
         foreach ($query->each() as $row) {
-            //var_dump($row);die;
-            $fh = fopen('file.csv', 'w');
-
-            fputcsv($fh, $row, "\t");
-
-            fclose($fh);
+            fputcsv($fh, [
+                $row['id'], $row['user'], $row['link'], $row['quantity'],
+                $row['service_name'], $row['status'], $row['mode'],
+                date('Y-m-d H:i:s', intval($row['created_at']))
+            ], "\t");
         }
-
+        fclose($fh);
+        ob_end_clean();
     }
 
 }
