@@ -28,8 +28,7 @@ And you can access the PMA(PhpMyAdmin) through the following URL:
  $ http://localhost:8080/
 ~~~
 
-In project folder <i>database</i> you can found two dump sql files, import them into PMA settings or put this sql files in <i>modules/orders/web</i> use special action <i>actionAddDataToDb()</i> in OrdersController 
-
+In project folder <i>database</i> you can found two dump sql files, import them into PMA settings 
 
 REQUIREMENTS
 ------------
